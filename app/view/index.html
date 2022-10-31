@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Bank Login</title>
+    </head>
+    <body>
+        <div class="header">
+            <h1>XX銀行</h1>
+        </div>
+        <form action="/api/signIn?_csrf=<%= csrf %>" method="post">
+            <label>使用者代號：</label>
+            <input type="text" name="userAccount" required>
+            <br>
+            <label>使用者密碼：</label>
+            <input type="password" name="password" required>
+            <br>
+            <button type="submit">登入</button>
+        </form>
+        <a href="/api/signUp">註冊</a>
+    </body>
+</html>
