@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Member</title>
+    </head>
+    <body>
+        <div class="header">
+            <h1><%= userAccount %> 歡迎</h1>
+            <a href="/api/member/signOut">登出</a>
+        </div>
+        <a href="/api/deposit">存款</a>
+        <a href="/api/withdraw">提款</a>
+        <br>
+        <label>歷史紀錄：</label>
+        <br>
+        <table>
+            <tr>
+                <td>時間</td>
+                <td>存提款金額</td>
+                <td>餘額</td>
+            </tr>
+            <% for (let i of trasnactionRecordArray){%>
+            <tr>
+                <td><%= i.createdAt%></td>
+                <td><%= i.amount%></td>
+                <td><%= i.balance%></td>
+            </tr>
+            <% } %>
+        </table>
+    </body>
+</html>

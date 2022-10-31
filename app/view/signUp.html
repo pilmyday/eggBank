@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Sign Up</title>
+    </head>
+    <body>
+        <div class="header">
+            <h1>Sign Up</h1>
+        </div>
+        <form action="/api/signUp?_csrf=<%= csrf %>" method="post">
+            <label>使用者帳號:</label>
+            <input type="text" name="userAccount">
+            <br>
+            <label>使用者密碼:</label>
+            <input type="password" name="password">
+            <br>
+            <button type="submit">送出</button>
+        </form>
+        <a href="/api/signIn">返回</a>
+    </body>
+</html>
