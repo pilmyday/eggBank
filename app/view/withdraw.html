@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>提款</title>
+    </head>
+    <body>
+        <div class="header">
+            <h1>提款</h1>
+        </div>
+        <form action="/api/withdraw?_csrf=<%= csrf %>" method="post">
+            <input type="number" name="withdraw">
+            <button type="submit">送出</button>
+        </form> 
+        <a href="/api/member">取消</a>
+    </body>
+</html>
