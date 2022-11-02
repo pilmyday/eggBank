@@ -8,7 +8,7 @@ module.exports = {
       id: {
         type: INTEGER,
         primaryKey: true,
-        autoIncrement: true
+        autoIncrement: true,
       },
       user_account: {
         type: STRING(20),
@@ -20,7 +20,7 @@ module.exports = {
     });
 
     await queryInterface.createTable('records', {
-      record_id: { type: INTEGER, primaryKey: true, autoIncrement:true },
+      record_id: { type: INTEGER, primaryKey: true, autoIncrement: true },
       amount: INTEGER,
       balance: {
         type: INTEGER,
@@ -29,9 +29,9 @@ module.exports = {
       user_account: STRING(20),
       created_at: STRING(60),
       updated_at: DATE,
-    })
+    });
   },
-  down: async (queryInterface) => {
+  down: async queryInterface => {
     await queryInterface.dropTable('users');
     await queryInterface.dropTable('records');
   },
