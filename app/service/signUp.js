@@ -6,23 +6,19 @@ class SignUpService extends Service {
   async createAccount(userAccount, password) {
     const loadLua = await this.app.redis.script('load', lua);
     const currentTime = new Date().toLocaleString('zh-TW');
+    const redisRecordIdListKey = 'records:' + userAccount;
     const checkAccount = await this.checkAccountExists(userAccount);
 
     if (!checkAccount) {
-      const result = await this.app.redis.evalsha(
+      const recordId = await this.app.redis.evalsha(
         loadLua,
         1,
         userAccount,
         password,
         currentTime
       );
-      const recordId = result[0];
-      const amount = result[1];
-      const balance = result[2];
-      const createdAt = result[3];
-
       await this.app.redis.lpush(
-        'records:' + userAccount,
+        redisRecordIdListKey,
         recordId
       );
       this.ctx.model.User.create({

@@ -6,12 +6,11 @@ local recordId = redis.call(
   'incr',
   'recordId'
 );
-local redisRecord = {
+local redisRecordJson = cjson.encode({
   amount = 0,
   balance = 0,
   createdAt = currentTime
-}
-local redisRecordJson = cjson.encode(redisRecord);
+});
 
 redis.call(
   'mset',
@@ -23,9 +22,4 @@ redis.call(
   0
 );
 
-return {
-  recordId,
-  redisRecord['amount'],
-  redisRecord['balance'],
-  redisRecord['createdAt']
-};
+return recordId;

@@ -6,13 +6,17 @@ class SignInService extends Service {
       userAccount
     );
     if (password === redisPassword) {
-      this.ctx.cookies.set('userAccount', userAccount);
-      this.ctx.session.userAccount = userAccount;
       await this.checkRedisRecordList(userAccount);
-
-      return this.ctx.redirect('/api/member');
+      await this.signInSuccess(userAccount);
     }
     await this.signInSql(userAccount, password);
+  }
+
+  async signInSuccess(userAccount) {
+    this.ctx.cookies.set('userAccount', userAccount);
+    this.ctx.session.userAccount = userAccount;
+
+    return this.ctx.redirect('/api/member');
   }
 
   async signInSql(userAccount, password) {
@@ -23,12 +27,9 @@ class SignInService extends Service {
       return this.ctx.redirect('/api/signIn');
     }
     if (password === sqlUser.password) {
-      this.ctx.cookies.set('userAccount', userAccount);
-      this.ctx.session.userAccount = userAccount;
       await this.createRedisUserAccount(sqlUser.userAccount, sqlUser.password);
       await this.checkRedisRecordList(userAccount);
-
-      return this.ctx.redirect('/api/member');
+      await this.signInSuccess(userAccount);
     }
     return this.ctx.redirect('/api/signIn');
   }

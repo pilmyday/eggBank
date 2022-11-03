@@ -18,7 +18,12 @@ class TransactionService extends Service {
     const recordId = redisResult[0];
     const newAmount = redisResult[1];
     const newBalance = redisResult[2];
-    const newRecord = JSON.stringify({
+    const redisRecord = JSON.stringify({
+      amount: newAmount,
+      balance: newBalance,
+      createdAt: currentTime,
+    });
+    const sqlRecord = JSON.stringify({
       recordId,
       amount: newAmount,
       balance: newBalance,
@@ -26,13 +31,17 @@ class TransactionService extends Service {
       createdAt: currentTime,
     });
 
+    await this.app.redis.set(
+      recordId,
+      redisRecord
+    );
     await this.app.redis.lpush(
       redisRecordIdListKey,
       recordId
     );
     await this.app.redis.lpush(
       'queue',
-      newRecord
+      sqlRecord
     );
   }
 

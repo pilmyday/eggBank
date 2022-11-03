@@ -10,33 +10,17 @@ local balance = tonumber(redis.call(
   balanceKey
 ));
 local newBalance;
-local newAmount;
 if amount + balance < 0 then
-  newAmount = 0;
-  newBalance = balance;
-else
-  newAmount = amount;
-  newBalance = redis.call(
-    'incrby',
-    balanceKey,
-    amount
-  );
+  amount = 0;
 end
-
-local newRedisRecord = cjson.encode({
-  amount = newAmount,
-  balance = newBalance,
-  createdAt = currentTime
-});
-
-redis.call(
-  'set',
-  recordId,
-  newRedisRecord
+newBalance = redis.call(
+  'incrby',
+  balanceKey,
+  amount
 );
 
 return {
   recordId,
-  newAmount,
+  amount,
   newBalance
 };
