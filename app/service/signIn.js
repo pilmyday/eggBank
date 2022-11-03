@@ -1,5 +1,11 @@
 const Service = require('egg').Service;
 
+function toInt(str) {
+  if (typeof str === 'number') return str;
+  if (!str) return str;
+  return parseInt(str, 10) || 0;
+}
+
 class SignInService extends Service {
   async signInRedis(userAccount, password) {
     const redisPassword = await this.app.redis.get(
@@ -42,10 +48,10 @@ class SignInService extends Service {
   }
 
   async checkRedisRecordList(userAccount) {
-    const recordIdLatest = await this.app.redis.lindex(
+    const recordIdLatest = toInt(await this.app.redis.lindex(
       'records:' + userAccount,
       0
-    );
+    ));
     const sqlRecordLatest = await this.ctx.model.Record.findOne({
       where: { userAccount },
       order: [[ 'recordId', 'DESC' ]],

@@ -27,10 +27,10 @@ class SignUpService extends Service {
       });
       this.ctx.model.Record.create({
         recordId,
-        amount,
-        balance,
+        amount: 0,
+        balance: 0,
         userAccount,
-        createdAt,
+        createdAt: currentTime,
       });
 
       return this.ctx.redirect('/api/signIn');
