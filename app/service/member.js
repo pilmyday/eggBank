@@ -1,38 +1,37 @@
 const Service = require('egg').Service;
 
 class MemberService extends Service {
-    async render(path) {
-        const csrf = this.ctx.csrf;
+  async render(path) {
+    const csrf = this.ctx.csrf;
 
-        return this.ctx.render(path, {
-            csrf: csrf
-        })
+    return this.ctx.render(path, { csrf });
+  }
+
+  async showTable() {
+    const userAccount = this.ctx.session.userAccount;
+    const redisRecordIdListKey = 'records:' + userAccount;
+    const redisRecordIdList = await this.app.redis.lrange(
+      redisRecordIdListKey,
+      0,
+      99
+    );
+    const trasnactionRecordArray = [];
+
+    for (const recordId of redisRecordIdList) {
+      const record = await this.app.redis.get(recordId);
+      const recordJson = JSON.parse(record);
+      trasnactionRecordArray.push(recordJson);
     }
 
-    async showTable() {
-        const userAccount = this.ctx.session.userAccount;
-        const redisRecordListKey = 'records:' + userAccount;
-        const redisRecordList = await this.app.redis.lrange(
-            redisRecordListKey,
-            0,
-            99,
-        );
-        let trasnactionRecordArray = [];
+    await this.ctx.render('member.html', {
+      userAccount,
+      trasnactionRecordArray,
+    });
+  }
 
-        for (let i of redisRecordList) {
-            const record = JSON.parse(await this.app.redis.get(i));
-            trasnactionRecordArray.push(record);
-        }
-
-        await this.ctx.render('member.html', {
-            userAccount,
-            trasnactionRecordArray
-        });
-    }
-
-    async signOut() {
-        this.ctx.session = null;
-    }
+  async signOut() {
+    this.ctx.session = null;
+  }
 }
 
 module.exports = MemberService;
