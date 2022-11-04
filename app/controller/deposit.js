@@ -10,10 +10,14 @@ class DepositController extends Controller {
   async create() {
     const ctx = this.ctx;
     const requestBody = ctx.request.body;
-    const deposit = requestBody.deposit;
-    await this.service.transaction.transaction(deposit);
+    const deposit = await this.service.transaction.toInt(requestBody.deposit);
+    if (deposit > 0 && deposit <= 10000000) {
+      await this.service.transaction.transaction(deposit);
 
-    ctx.redirect('/api/member');
+      return ctx.redirect('/api/member');
+    }
+
+    ctx.body = '金額必須在1~10000000以內';
   }
 }
 

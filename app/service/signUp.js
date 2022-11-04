@@ -6,40 +6,44 @@ class SignUpService extends Service {
   async createAccount(userAccount, password) {
     const loadLua = await this.app.redis.script('load', lua);
     const currentTime = new Date().toLocaleString('zh-TW');
+    const redisRecordListKey = 'records:' + userAccount;
     const checkAccount = await this.checkAccountExists(userAccount);
+    const initialMoney = 1000;
 
     if (!checkAccount) {
-      const result = await this.app.redis.evalsha(
+      const recordId = await this.app.redis.evalsha(
         loadLua,
         1,
         userAccount,
         password,
         currentTime
       );
-      const recordId = result[0];
-      const amount = result[1];
-      const balance = result[2];
-      const createdAt = result[3];
-
+      const redisRecordJson = JSON.stringify({
+        recordId,
+        amount: initialMoney,
+        balance: initialMoney,
+        createdAt: currentTime,
+      });
       await this.app.redis.lpush(
-        'records:' + userAccount,
-        recordId
+        redisRecordListKey,
+        redisRecordJson
       );
-      this.ctx.model.User.create({
+      await this.ctx.model.User.create({
         userAccount,
         password,
       });
-      this.ctx.model.Record.create({
+      await this.ctx.model.Record.create({
         recordId,
-        amount,
-        balance,
+        amount: initialMoney,
+        balance: initialMoney,
         userAccount,
-        createdAt,
+        createdAt: currentTime,
       });
 
       return this.ctx.redirect('/api/signIn');
     }
-    this.ctx.body = checkAccount;
+
+    this.ctx.body = '已註冊過的帳號';
   }
 
   async checkAccountExists(userAccount) {
