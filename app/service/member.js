@@ -9,18 +9,17 @@ class MemberService extends Service {
 
   async showTable() {
     const userAccount = this.ctx.session.userAccount;
-    const redisRecordIdListKey = 'records:' + userAccount;
-    const redisRecordIdList = await this.app.redis.lrange(
-      redisRecordIdListKey,
+    const redisRecordListKey = 'records:' + userAccount;
+    const redisRecordList = await this.app.redis.lrange(
+      redisRecordListKey,
       0,
       99
     );
     const trasnactionRecordArray = [];
 
-    for (const recordId of redisRecordIdList) {
-      const record = await this.app.redis.get(recordId);
-      const recordJson = JSON.parse(record);
-      trasnactionRecordArray.push(recordJson);
+    for (const redisRecordJson of redisRecordList) {
+      const record = JSON.parse(redisRecordJson);
+      trasnactionRecordArray.push(record);
     }
 
     await this.ctx.render('member.html', {

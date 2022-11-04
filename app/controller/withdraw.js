@@ -11,9 +11,13 @@ class WithdrawController extends Controller {
     const ctx = this.ctx;
     const requestBody = ctx.request.body;
     const withdraw = '-' + requestBody.withdraw;
-    await this.service.transaction.transaction(withdraw);
+    const transactionResult = await this.service.transaction.transaction(withdraw);
 
-    ctx.redirect('/api/member');
+    if (transactionResult) {
+      return ctx.redirect('/api/member');
+    }
+
+    ctx.body = '餘額不足';
   }
 }
 

@@ -7,33 +7,44 @@ class TransactionService extends Service {
     const userAccount = this.ctx.session.userAccount;
     const loadLua = await this.app.redis.script('load', lua);
     const currentTime = new Date().toLocaleString('zh-TW');
-    const redisRecordIdListKey = 'records:' + userAccount;
+    const redisRecordListKey = 'records:' + userAccount;
     const redisResult = await this.app.redis.evalsha(
       loadLua,
       1,
       userAccount,
-      amount,
-      currentTime
+      amount
     );
     const recordId = redisResult[0];
-    const newAmount = redisResult[1];
-    const newBalance = redisResult[2];
-    const newRecord = JSON.stringify({
-      recordId,
-      amount: newAmount,
-      balance: newBalance,
-      userAccount,
-      createdAt: currentTime,
-    });
+    const newBalance = redisResult[1];
+    const result = redisResult[2];
+    if (result) {
+      const redisRecordJson = JSON.stringify({
+        recordId,
+        amount,
+        balance: newBalance,
+        createdAt: currentTime,
+      });
+      const sqlRecordJson = JSON.stringify({
+        recordId,
+        amount,
+        balance: newBalance,
+        userAccount,
+        createdAt: currentTime,
+      });
 
-    await this.app.redis.lpush(
-      redisRecordIdListKey,
-      recordId
-    );
-    await this.app.redis.lpush(
-      'queue',
-      newRecord
-    );
+      await this.app.redis.lpush(
+        redisRecordListKey,
+        redisRecordJson
+      );
+      await this.app.redis.lpush(
+        'queue',
+        sqlRecordJson
+      );
+
+      return true;
+    }
+
+    return false;
   }
 
   async bulkCreateSqlRecord(recordArray) {
