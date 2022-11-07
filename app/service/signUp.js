@@ -42,7 +42,7 @@ class SignUpService extends Service {
       return this.ctx.redirect('/api/signIn');
     }
 
-    this.ctx.body = checkAccount;
+    this.ctx.body = '已註冊過的帳號';
   }
 
   async checkAccountExists(userAccount) {

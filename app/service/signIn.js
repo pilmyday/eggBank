@@ -26,7 +26,9 @@ class SignInService extends Service {
       where: { userAccount },
     });
     if (sqlUser === null) {
-      return this.ctx.redirect('/api/signIn');
+      this.ctx.body = '不存在的帳號';
+
+      return;
     }
     if (password === sqlUser.password) {
       const signInResult = await this.signInSuccess(userAccount);
@@ -37,7 +39,7 @@ class SignInService extends Service {
       return signInResult;
     }
 
-    return this.ctx.redirect('/api/signIn');
+    this.ctx.body = '帳號或密碼錯誤';
   }
 
   async createRedisUserAccount(userAccount, password) {

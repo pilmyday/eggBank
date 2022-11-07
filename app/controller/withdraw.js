@@ -10,14 +10,19 @@ class WithdrawController extends Controller {
   async create() {
     const ctx = this.ctx;
     const requestBody = ctx.request.body;
-    const withdraw = '-' + requestBody.withdraw;
-    const transactionResult = await this.service.transaction.transaction(withdraw);
+    const money = await this.service.transaction.toInt(requestBody.withdraw);
+    if (money > 0) {
+      const withdraw = '-' + money;
+      const transactionResult = await this.service.transaction.transaction(withdraw);
 
-    if (transactionResult) {
-      return ctx.redirect('/api/member');
+      if (transactionResult) {
+        return ctx.redirect('/api/member');
+      }
+
+      ctx.body = '餘額不足';
+    } else {
+      ctx.body = '金額不得小於或等於0';
     }
-
-    ctx.body = '餘額不足';
   }
 }
 
