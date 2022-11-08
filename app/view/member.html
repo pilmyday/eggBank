@@ -20,11 +20,11 @@
                 <td>存提款金額</td>
                 <td>餘額</td>
             </tr>
-            <% for (let i of trasnactionRecordArray){%>
+            <% for (let record of trasnactionRecordArray){%>
             <tr>
-                <td><%= i.createdAt%></td>
-                <td><%= i.amount%></td>
-                <td><%= i.balance%></td>
+                <td><%= record.createdAt%></td>
+                <td><%= record.amount%></td>
+                <td><%= record.balance%></td>
             </tr>
             <% } %>
         </table>

@@ -9,7 +9,7 @@
             <h1>存款</h1>
         </div>
         <form action="/api/deposit?_csrf=<%= csrf %>" method="post">
-            <input type="number" name="deposit">
+            <input type="number" name="deposit" min=1 max="10000000">
             <button type="submit">送出</button>
         </form> 
         <a href="/api/member">取消</a>
